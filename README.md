@@ -1,3 +1,7 @@
+![Build](https://github.com/tanjib028/currency_cli/actions/workflows/release.yml/badge.svg)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![GitHub release](https://img.shields.io/github/v/release/tanjib028/currency_cli)
+
 # Currency CLI 💱
 
 A fast and flexible currency converter built in Rust using the [apilayer Exchange Rates Data API](https://apilayer.com/marketplace/exchangerates_data-api).
