@@ -1,0 +1,33 @@
+[package]
+name = "currency-cli"
+version = "0.1.0"
+edition = "2021"
+description = "Fast, privacy-friendly currency converter CLI with caching and cross-platform binaries"
+license = "MIT"
+repository = "https://github.com/youruser/currency-cli"
+homepage = "https://youruser.github.io/currency-cli"
+keywords = ["currency", "cli", "exchange-rates", "rust"]
+categories = ["command-line-utilities"]
+
+[dependencies]
+clap = { version = "4.5.4", features = ["derive"] }
+reqwest = { version = "0.12", features = ["json", "rustls-tls"] }
+tokio = { version = "1.39", features = ["macros", "rt-multi-thread"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+dirs = "5.0"
+chrono = { version = "0.4", features = ["serde"] }
+anyhow = "1.0"
+thiserror = "1.0"
+toml = "0.8"
+
+[dev-dependencies]
+assert_cmd = "2.0"
+predicates = "3.0"
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "z"
+panic = "abort"
+
