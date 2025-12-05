@@ -30,3 +30,4 @@ git clone https://github.com/tanjib028/currency_cli.git
 cd currency_cli
 cargo build --release
 
+
