@@ -1,9 +1,9 @@
-name: Release Statically Linked Rust Binary
+name: Build and Release
 
 on:
   push:
     tags:
-      - 'v*'  # Trigger on tags like 'v1.0.0'
+      - 'v*'   # runs when you push a version tag like v1.0.0
 
 jobs:
   build:
@@ -11,14 +11,13 @@ jobs:
     strategy:
       matrix:
         target:
-          - x86_64-unknown-linux-musl       # Linux (musl)
-          - aarch64-unknown-linux-musl      # ARM Linux (musl)
-
-    env:
-      BINARY_NAME: currency_cli
+          - x86_64-unknown-linux-musl       # Linux Intel
+          - aarch64-unknown-linux-musl      # Linux ARM
+          - x86_64-apple-darwin             # macOS Intel
+          - aarch64-apple-darwin            # macOS ARM
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Install Rust
@@ -27,33 +26,22 @@ jobs:
       - name: Install Cross
         run: cargo install cross --git https://github.com/cross-rs/cross
 
-      - name: Install Target for Cross Compilation
+      - name: Add Target
         run: rustup target add ${{ matrix.target }}
 
-      - name: Build with Cross
-        run: cross build --target ${{ matrix.target }} --release --verbose
+      - name: Build
+        run: cross build --target ${{ matrix.target }} --release
 
-      - name: Create Release Archive
+      - name: Package Binary
         run: |
           mkdir -p release
-
-          if [[ "${{ matrix.target }}" == *"windows"* ]]; then
-            cp target/${{ matrix.target }}/release/$BINARY_NAME.exe release/
-            zip -r ${{ matrix.target }}.zip release
-          elif [[ "${{ matrix.target }}" == *"darwin"* ]]; then
-            cp target/${{ matrix.target }}/release/$BINARY_NAME release/
-            tar -czvf ${{ matrix.target }}.tar.gz -C release $BINARY_NAME
-          else
-            cp target/${{ matrix.target }}/release/$BINARY_NAME release/
-            tar -czvf ${{ matrix.target }}.tar.gz -C release $BINARY_NAME
-          fi
+          cp target/${{ matrix.target }}/release/currency_cli release/
+          tar -czvf currency_cli-${{ matrix.target }}.tar.gz -C release currency_cli
 
       - name: Upload Release Assets
         uses: softprops/action-gh-release@v2
         with:
           files: |
             *.tar.gz
-            *.zip
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }
