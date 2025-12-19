@@ -1,6 +1,7 @@
 ![Build](https://github.com/tanjib028/currency_cli/actions/workflows/release.yml/badge.svg)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![GitHub release](https://img.shields.io/github/v/release/tanjib028/currency_cli)
+[![Release](https://img.shields.io/github/v/release/tanjib028/currency_cli)](https://github.com/tanjib028/currency_cli/releases)
 
 **Contributions welcome:** See [CONTRIBUTING.md](CONTRIBUTING.md).
 
@@ -32,3 +33,12 @@ git clone https://github.com/tanjib028/currency_cli.git
 cd currency_cli
 cargo build --release
 
+
+## 📥 Prebuilt Binaries
+
+| Platform | Architecture | File |
+|----------|--------------|------|
+| Linux    | x86_64       | [Download](https://github.com/tanjib028/currency_cli/releases/download/v1.0.10/currency-cli-x86_64-unknown-linux-musl.tar.gz)  
+| Linux    | aarch64      | [Download](https://github.com/tanjib028/currency_cli/releases/download/v1.0.10/currency-cli-aarch64-unknown-linux-musl.tar.gz)  
+| macOS    | x86_64       | [Download](https://github.com/tanjib028/currency_cli/releases/download/v1.0.10/currency-cli-x86_64-apple-darwin)  
+| macOS    | aarch64      | [Download](https://github.com/tanjib028/currency_cli/releases/download/v1.0.10/currency-cli-aarch64-apple-darwin)
