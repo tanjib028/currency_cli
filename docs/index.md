@@ -13,9 +13,10 @@ Currency CLI automates conversions with:
 ## Demo
 ![Screenshot](demo.png)
 
-## Download
-- [Linux aarch64 binary](link-to-artifact)
-- [Linux x86_64 binary](link-to-artifact)
-
+## Downloads
+- [Linux x86_64 binary](currency_cli-x86_64-linux)
+- [Linux aarch64 binary](currency_cli-aarch64-linux)
+- [macOS Intel binary](currency_cli-x86_64-apple-darwin)
+- [macOS ARM binary](currency_cli-aarch64-apple-darwin)
 ## Pricing
 Free for students. Future premium features planned.
