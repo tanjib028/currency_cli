@@ -23,10 +23,15 @@ jobs:
         toolchain: stable
         override: true
 
-    - name: Install system dependencies
+    - name: Install cross compiler and dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y musl-tools pkg-config libssl-dev
+        sudo apt-get install -y musl-tools gcc-aarch64-linux-gnu pkg-config libssl-dev
+
+    - name: Set OpenSSL env
+      run: |
+        echo "OPENSSL_DIR=/usr" >> $GITHUB_ENV
+        echo "PKG_CONFIG_PATH=/usr/lib/pkgconfig" >> $GITHUB_ENV
 
     - name: Add Rust target
       run: rustup target add ${{ matrix.target }}
