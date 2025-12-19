@@ -1,54 +1,59 @@
-name: Build Currency CLI
+name: Release Statically Linked Rust Binary
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    tags:
+      - 'v*'  # Trigger on tags like 'v1.0.0'
 
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        target: [x86_64-unknown-linux-musl, aarch64-unknown-linux-musl]
+        target:
+          - x86_64-unknown-linux-musl       # Linux (musl)
+          - aarch64-unknown-linux-musl      # ARM Linux (musl)
+
+    env:
+      BINARY_NAME: currency_cli
 
     steps:
-    - name: Checkout source
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Install Rust toolchain
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: stable
-        override: true
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
 
-    - name: Install cross compiler and dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y musl-tools gcc-aarch64-linux-gnu pkg-config libssl-dev
+      - name: Install Cross
+        run: cargo install cross --git https://github.com/cross-rs/cross
 
-    - name: Symlink musl tools
-      run: |
-        sudo ln -s /usr/bin/aarch64-linux-gnu-gcc /usr/bin/aarch64-linux-musl-gcc
-        sudo ln -s /usr/bin/aarch64-linux-gnu-ar /usr/bin/aarch64-linux-musl-ar
+      - name: Install Target for Cross Compilation
+        run: rustup target add ${{ matrix.target }}
 
-    - name: Set OpenSSL environment
-      run: |
-        echo "OPENSSL_DIR=/usr" >> $GITHUB_ENV
-        echo "OPENSSL_LIB_DIR=/usr/lib/aarch64-linux-gnu" >> $GITHUB_ENV
-        echo "OPENSSL_INCLUDE_DIR=/usr/include" >> $GITHUB_ENV
-        echo "PKG_CONFIG_PATH=/usr/lib/aarch64-linux-gnu/pkgconfig" >> $GITHUB_ENV
+      - name: Build with Cross
+        run: cross build --target ${{ matrix.target }} --release --verbose
 
-    - name: Add Rust target
-      run: rustup target add ${{ matrix.target }}
+      - name: Create Release Archive
+        run: |
+          mkdir -p release
 
-    - name: Build for ${{ matrix.target }}
-      run: cargo build --release --target ${{ matrix.target }}
+          if [[ "${{ matrix.target }}" == *"windows"* ]]; then
+            cp target/${{ matrix.target }}/release/$BINARY_NAME.exe release/
+            zip -r ${{ matrix.target }}.zip release
+          elif [[ "${{ matrix.target }}" == *"darwin"* ]]; then
+            cp target/${{ matrix.target }}/release/$BINARY_NAME release/
+            tar -czvf ${{ matrix.target }}.tar.gz -C release $BINARY_NAME
+          else
+            cp target/${{ matrix.target }}/release/$BINARY_NAME release/
+            tar -czvf ${{ matrix.target }}.tar.gz -C release $BINARY_NAME
+          fi
 
-    - name: Upload binary
-      uses: actions/upload-artifact@v4
-      with:
-        name: currency_cli-${{ matrix.target }}
-        path: target/${{ matrix.target }}/release/currency_cli
+      - name: Upload Release Assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            *.tar.gz
+            *.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
