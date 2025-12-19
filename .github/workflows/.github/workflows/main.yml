@@ -28,15 +28,19 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y musl-tools gcc-aarch64-linux-gnu pkg-config libssl-dev
 
-    - name: Set OpenSSL env
+    - name: Set OpenSSL environment
       run: |
         echo "OPENSSL_DIR=/usr" >> $GITHUB_ENV
+        echo "OPENSSL_LIB_DIR=/usr/lib" >> $GITHUB_ENV
+        echo "OPENSSL_INCLUDE_DIR=/usr/include" >> $GITHUB_ENV
         echo "PKG_CONFIG_PATH=/usr/lib/pkgconfig" >> $GITHUB_ENV
 
     - name: Add Rust target
       run: rustup target add ${{ matrix.target }}
 
     - name: Build for ${{ matrix.target }}
+      env:
+        CC_aarch64_unknown_linux_musl: aarch64-linux-gnu-gcc
       run: cargo build --release --target ${{ matrix.target }}
 
     - name: Upload binary
@@ -44,4 +48,3 @@ jobs:
       with:
         name: currency_cli-${{ matrix.target }}
         path: target/${{ matrix.target }}/release/currency_cli
-
