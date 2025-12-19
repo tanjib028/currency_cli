@@ -44,3 +44,4 @@ jobs:
       with:
         name: currency_cli-${{ matrix.target }}
         path: target/${{ matrix.target }}/release/currency_cli
+
